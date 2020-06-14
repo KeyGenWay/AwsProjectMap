@@ -1,8 +1,17 @@
 
 <div style="initial-div">
-  <agm-map class="map"
+  <agm-map 
+  class="map"
   [latitude]='latitude' 
   [longitude]='longitude'
-  [mapTypeId]='mapType'>
+  [mapTypeId]='mapType'
+  [disableDoubleClickZoom]=true
+  (mapRightClick) = "onRightClickHandle($event)"
+  (mapClick) = "onClickHandler($event)"
+  >
+  <agm-marker *ngIf = "clickedPoint != undefined"
+              [latitude]="clickedPoint.latitude" 
+              [longitude]="clickedPoint.longitude">
+            </agm-marker>
   </agm-map>
 </div>
