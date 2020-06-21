@@ -27,7 +27,6 @@ namespace LambdaFunction
         public UserModel() { }
         public UserModel( string number, double longtitude, double latitude)
         {
-            //this.Id = Guid.NewGuid().ToString();
             this.PhoneNumber = number;
             this.Longtitude = longtitude;
             this.Latitude = latitude;

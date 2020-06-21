@@ -19,7 +19,6 @@ namespace LambdaFunction
         private readonly DynamoDBContext context;
         public RegisterNewUser()
         {
-
             client = new AmazonDynamoDBClient(RegionEndpoint.GetBySystemName("us-east-2"));
             context = new DynamoDBContext(client);
         }

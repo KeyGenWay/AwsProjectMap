@@ -1,2 +1,7 @@
 ClientApp/map-project/node_modules
 ClientApp/map-project/dist
+/WeatherProject/LambdaFunction/obj
+/WeatherProject/LambdaFunction.Tests/obj
+/WeatherProject/LambdaFunction.Tests/bin/Debug/netcoreapp3.1
+/WeatherProject/LambdaFunction/Properties
+/WeatherProject/.vs/WeatherProject/v16/TestStore/0
