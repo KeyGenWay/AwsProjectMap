@@ -1,9 +1,9 @@
 ﻿using Amazon;
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.ECS.Model;
 using Amazon.Runtime;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -24,6 +24,18 @@ namespace LambdaFunction
         private const string LongtitudeName = "Lng";
         private const string LatitudeName = "Lat";
 
+        public static readonly JsonSchema Schema = JsonSchema.Parse(@"{
+              'type': 'object',
+              'properties': {
+                'PhoneNumber': {'type':'string'},
+                'Lng':{'type':'number'},
+                'Lat':{'type':'number'},
+              },
+              'additionalProperties': false,
+              
+
+            }");
+
         public UserModel() { }
         public UserModel( string number, double longtitude, double latitude)
         {
@@ -35,19 +47,5 @@ namespace LambdaFunction
         {
             return string.Format("{0}, {1}, {2}", PhoneNumber, Longtitude, Latitude);
         }
-    }
-
-
-    [DynamoDBTable("Users")]
-    public class UserDocument
-    {
-        [DynamoDBHashKey]
-        public string Id { get; set; }
-        [DynamoDBProperty]
-        public string PhoneNumber { get; set; }
-        [DynamoDBProperty]
-        public double Lng { get; set; }
-        [DynamoDBProperty]
-        public double Lat { get; set; }
     }
 }

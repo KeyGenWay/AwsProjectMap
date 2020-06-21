@@ -5,3 +5,4 @@ ClientApp/map-project/dist
 /WeatherProject/LambdaFunction.Tests/bin/Debug/netcoreapp3.1
 /WeatherProject/LambdaFunction/Properties
 /WeatherProject/.vs/WeatherProject/v16/TestStore/0
+/WeatherProject/LambdaFunction/bin
