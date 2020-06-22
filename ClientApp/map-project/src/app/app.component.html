@@ -16,6 +16,6 @@
     </agm-map>
   </div>
   <div style="width: 400px; height: 200px; margin: 0 auto; margin-top:50px;">
-    <input class="input">
-    <button class="button">Zarejestruj</button>
+    <input class="input" [(ngModel)]="phoneNumberValue">
+    <button class="button" (click)="onButtonClick()" >Zarejestruj</button>
   </div>

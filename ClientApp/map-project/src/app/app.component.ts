@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, AfterContentInit } from '@angular/core';
 import { MouseEvent } from '@agm/core'
 import { MarkerManager, AgmMarker } from '@agm/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -13,10 +13,12 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent implements  AfterContentInit {
   title = 'map-project';
 
+  registerUserUrl: string = "https://2kiar56d77.execute-api.us-east-2.amazonaws.com/Test/user";
   latitude: number =51.9189046;
   longitude: number =19.1343786;
   mapType = 'hybrid';
   public clickedPoint: AgmMarker = this.createMarker(this.longitude, this.latitude);
+  public phoneNumberValue: string;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -27,11 +29,15 @@ export class AppComponent implements  AfterContentInit {
   
   public onRightClickHandle(event: MouseEvent ) {
     const assign = 'anything';
-  
   }
 
   public onClickHandler(event: MouseEvent) {
-    this. clickedPoint = this.createMarker(event.coords.lng, event.coords.lat)
+    this.clickedPoint = this.createMarker(event.coords.lng, event.coords.lat)
+  }
+
+  public onButtonClick()
+  {
+    this.registerUserWithApi();
   }
   public getLocation(): void {
     if (navigator.geolocation) {
@@ -57,5 +63,22 @@ export class AppComponent implements  AfterContentInit {
       visible: true,
       title: "This is my place"
     }
+  }
+
+  private registerUserWithApi() {
+
+    let headers = new HttpHeaders();
+    headers.append("Content-Type", "application/json");
+    let body = {
+      PhoneNumber: this.phoneNumberValue,
+      Lng: this.clickedPoint.longitude,
+      Lat: this.clickedPoint.latitude,
+    }
+
+   this.httpClient.post(this.registerUserUrl,JSON.stringify(body), {headers, responseType: "text"}).subscribe((response) => {
+    alert("Thank you for registering in WeatherProject service. " + response);
+   }, err => {
+    alert("User has not been registered correctly.");
+   });
   }
 }

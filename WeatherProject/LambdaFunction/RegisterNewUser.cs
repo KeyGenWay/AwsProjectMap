@@ -1,4 +1,5 @@
 using Amazon;
+using Amazon.CloudFront.Model;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Lambda.APIGatewayEvents;
@@ -25,6 +26,9 @@ namespace LambdaFunction
         public const string UnknownException = "Unkown exception. Please check logs.";
 
         public const string HealthCheckResponse = "Service is Healthy and listeing...";
+
+        public const string FrontendUrl = "http://weatherfrontend.s3-website.us-east-2.amazonaws.com";
+        //public const string FrontendUrl = "http://localhost:4200";
         private readonly AmazonDynamoDBClient client;
         private readonly DynamoDBContext context;
         public RegisterNewUser()
@@ -38,7 +42,18 @@ namespace LambdaFunction
         {
             var response = new APIGatewayProxyResponse();
             response.IsBase64Encoded = false;
+            response.Headers = new Dictionary<string, string>();
+            response.Headers.Add("Content-Type", "text");
+            response.Headers.Add("Access-Control-Allow-Origin", FrontendUrl);
 
+            string origin;
+            input.Headers.TryGetValue("Origin", out origin);
+            if (origin != FrontendUrl )
+            {
+                response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
+                return response;
+            }
+            
             Console.WriteLine("Received new request with method " + input.HttpMethod);
             if (input.HttpMethod == HttpMethod.Get.ToString())
             {
