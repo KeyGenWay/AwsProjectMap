@@ -39,6 +39,7 @@ namespace LambdaFunction
             var response = new APIGatewayProxyResponse();
             response.IsBase64Encoded = false;
 
+            Console.WriteLine("Received new request with method " + input.HttpMethod);
             if (input.HttpMethod == HttpMethod.Get.ToString())
             {
                 response.StatusCode = (int)HttpStatusCode.OK;
@@ -47,7 +48,7 @@ namespace LambdaFunction
             }
             
 
-            Console.WriteLine("Received new request: " + input);
+            Console.WriteLine("Received new request: " + input.Body);
             JObject jsonBody;
             UserModel user;
 
