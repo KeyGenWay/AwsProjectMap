@@ -19,6 +19,7 @@ export class AppComponent implements  AfterContentInit {
   mapType = 'hybrid';
   public clickedPoint: AgmMarker = this.createMarker(this.longitude, this.latitude);
   public phoneNumberValue: string;
+  public emailValue: string;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -73,6 +74,7 @@ export class AppComponent implements  AfterContentInit {
       PhoneNumber: this.phoneNumberValue,
       Lng: this.clickedPoint.longitude,
       Lat: this.clickedPoint.latitude,
+      Email: this.emailValue
     }
 
    this.httpClient.post(this.registerUserUrl,JSON.stringify(body), {headers, responseType: "text"}).subscribe((response) => {
