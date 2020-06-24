@@ -31,10 +31,11 @@ namespace LambdaFunction
 
         public const string HealthCheckResponse = "Service is Healthy and listeing...";
 
-        public const string FrontendUrl = "http://weatherfrontend.s3-website.us-east-2.amazonaws.com";
-        //public const string FrontendUrl = "http://localhost:4200";
+        //public const string FrontendUrl = "http://weatherfrontend.s3-website.us-east-2.amazonaws.com";
+        public const string FrontendUrl = "http://localhost:4200";
 
         private const string SnSTopic = "arn:aws:sns:us-east-2:464446151961:email-notification-topic";
+        private const string SnSLambdaTopic = "arn:aws:sns:us-east-2:464446151961:join-lambdas";
 
         private readonly AmazonDynamoDBClient client;
         private readonly DynamoDBContext context;
@@ -132,7 +133,16 @@ namespace LambdaFunction
                 Console.WriteLine("Adding new user to Dynamo DB..");
                 context.Save(newItem);
                 Console.WriteLine("User added.");
-                CreateSubscriptionInSnS(newItem.Email, newItem.StationId);
+
+                UserSnsModel snsModel = new UserSnsModel
+                {
+                    UserId = newItem.Id,
+                    PhoneNumber = newItem.PhoneNumber,
+                    StationId = newItem.StationId,
+                    EmailAddress = newItem.Email
+                };
+                SendSnsNotification(snsModel);
+                //CreateSubscriptionInSnS(newItem.Email, newItem.StationId);
                 response.StatusCode = (int)HttpStatusCode.OK;
                 response.Body = SuccesfullyResponseMessage;
                 return response;
@@ -151,6 +161,21 @@ namespace LambdaFunction
             string filterPolicyString = string.Format("{\"stationId\":[\"{0}\"]}", stationId);
             SetSubscriptionAttributesRequest attributeRequest = new SetSubscriptionAttributesRequest(response.SubscriptionArn, "FilterPolicy", filterPolicyString);
             snsClient.SetSubscriptionAttributes(attributeRequest);
+        }
+
+        private void SendSnsNotification(UserSnsModel model)
+        {
+            Console.WriteLine("Starting creation of SnS Lambda Topic...");
+            Console.WriteLine(string.Format("Input parameters: {0}", model.ToString()));
+
+            string payload = JsonConvert.SerializeObject(model);
+
+            Console.WriteLine(string.Format("Serialized payload: {0}", payload));
+
+            PublishRequest publishRequest = new PublishRequest(SnSLambdaTopic, payload);
+            snsClient.Publish(publishRequest);
+
+            Console.WriteLine("Succesfully published message.");
 
         }
         
