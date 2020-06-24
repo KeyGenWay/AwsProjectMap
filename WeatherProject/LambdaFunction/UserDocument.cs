@@ -15,5 +15,7 @@ namespace LambdaFunction
         [DynamoDBProperty]
         public double Lat { get; set; }
        
+        [DynamoDBProperty]
+        public int StationId { get; set; }
     }
 }

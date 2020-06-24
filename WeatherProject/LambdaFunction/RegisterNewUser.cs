@@ -127,7 +127,9 @@ namespace LambdaFunction
                 return response;
             }
         }
+        private void GetNearestGeoStation(UserDocument user){
 
+        }
         
     }
 
