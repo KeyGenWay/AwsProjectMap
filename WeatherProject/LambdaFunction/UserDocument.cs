@@ -11,6 +11,8 @@ namespace LambdaFunction
         [DynamoDBProperty]
         public string PhoneNumber { get; set; }
         [DynamoDBProperty]
+        public string Email { get; set; }
+        [DynamoDBProperty]
         public double Lng { get; set; }
         [DynamoDBProperty]
         public double Lat { get; set; }

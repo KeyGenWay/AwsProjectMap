@@ -4,11 +4,15 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using Amazon.RDS.Model;
+using Amazon.SimpleNotificationService;
+using Amazon.SimpleNotificationService.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -29,11 +33,16 @@ namespace LambdaFunction
 
         public const string FrontendUrl = "http://weatherfrontend.s3-website.us-east-2.amazonaws.com";
         //public const string FrontendUrl = "http://localhost:4200";
+
+        private const string SnSTopic = "arn:aws:sns:us-east-2:464446151961:email-notification-topic";
+
         private readonly AmazonDynamoDBClient client;
         private readonly DynamoDBContext context;
+        private readonly AmazonSimpleNotificationServiceClient snsClient;
         public RegisterNewUser()
         {
             client = new AmazonDynamoDBClient(RegionEndpoint.GetBySystemName("us-east-2"));
+            snsClient = new AmazonSimpleNotificationServiceClient(RegionEndpoint.GetBySystemName("us-east-2"));
             context = new DynamoDBContext(client);
         }
 
@@ -103,6 +112,7 @@ namespace LambdaFunction
             {
                 Id = Guid.NewGuid().ToString(),
                 PhoneNumber = user.PhoneNumber,
+                Email = user.EmailAddress,
                 Lat = user.Latitude,
                 Lng = user.Longtitude
 
@@ -122,12 +132,25 @@ namespace LambdaFunction
                 Console.WriteLine("Adding new user to Dynamo DB..");
                 context.Save(newItem);
                 Console.WriteLine("User added.");
+                CreateSubscriptionInSnS(newItem.Email, newItem.StationId);
                 response.StatusCode = (int)HttpStatusCode.OK;
                 response.Body = SuccesfullyResponseMessage;
                 return response;
             }
         }
         private void GetNearestGeoStation(UserDocument user){
+
+        }
+
+        private void CreateSubscriptionInSnS(string email, int stationId)
+        {
+            Console.WriteLine("Starting creation of SnS Subscription...");
+            Console.WriteLine(string.Format("Input parameters: email: {0}, stationId: {1}", email, stationId));
+            SubscribeRequest request = new SubscribeRequest(SnSTopic, "email", email);
+            var response = snsClient.Subscribe(request);
+            string filterPolicyString = string.Format("{\"stationId\":[\"{0}\"]}", stationId);
+            SetSubscriptionAttributesRequest attributeRequest = new SetSubscriptionAttributesRequest(response.SubscriptionArn, "FilterPolicy", filterPolicyString);
+            snsClient.SetSubscriptionAttributes(attributeRequest);
 
         }
         
