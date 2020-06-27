@@ -20,6 +20,7 @@ export class AppComponent implements  AfterContentInit {
   public clickedPoint: AgmMarker = this.createMarker(this.longitude, this.latitude);
   public phoneNumberValue: string;
   public emailValue: string;
+  public loading: boolean = false;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -77,9 +78,12 @@ export class AppComponent implements  AfterContentInit {
       Email: this.emailValue
     }
 
+    this.loading=true;
    this.httpClient.post(this.registerUserUrl,JSON.stringify(body), {headers, responseType: "text"}).subscribe((response) => {
+     this.loading=false;
     alert("Thank you for registering in WeatherProject service. " + response);
    }, err => {
+     this.loading=false;
     alert("User has not been registered correctly.");
    });
   }

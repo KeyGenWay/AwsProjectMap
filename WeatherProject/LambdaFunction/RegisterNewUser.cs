@@ -30,8 +30,8 @@ namespace LambdaFunction
 
         public const string HealthCheckResponse = "Service is Healthy and listeing...";
 
-        //public const string FrontendUrl = "http://weatherfrontend.s3-website.us-east-2.amazonaws.com";
-        public const string FrontendUrl = "http://localhost:4200";
+        public const string FrontendUrl = "http://weatherfrontend.s3-website.us-east-2.amazonaws.com";
+        //public const string FrontendUrl = "http://localhost:4200";
 
         private const string SnSTopic = "arn:aws:sns:us-east-2:464446151961:email-notification-topic";
         private const string SnSLambdaTopic = "arn:aws:sns:us-east-2:464446151961:join-lambdas";
