@@ -39,13 +39,6 @@ namespace LambdaFunction
             }");
 
         public UserSnsModel() { }
-        //public UserModel( string emailAddress, string number, double longtitude, double latitude)
-        //{
-        //    this.PhoneNumber = number;
-        //    this.EmailAddress = emailAddress;
-        //    this.Longtitude = longtitude;
-        //    this.Latitude = latitude;
-        //}
         public override string ToString()
         {
             return string.Format("{0}, {1}, {2}, {3}", PhoneNumber,EmailAddress, UserId, StationId);

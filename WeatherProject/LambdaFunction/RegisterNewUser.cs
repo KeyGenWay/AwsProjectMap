@@ -1,10 +1,9 @@
 using Amazon;
-using Amazon.CloudFront.Model;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.IdentityManagement.Model;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
-using Amazon.RDS.Model;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Newtonsoft.Json;
@@ -12,7 +11,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Device.Location;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -109,16 +108,6 @@ namespace LambdaFunction
                 return response;
             }
 
-            UserDocument newItem = new UserDocument()
-            {
-                Id = Guid.NewGuid().ToString(),
-                PhoneNumber = user.PhoneNumber,
-                Email = user.EmailAddress,
-                Lat = user.Latitude,
-                Lng = user.Longtitude
-
-            };
-
 
             if (context == null)
             {
@@ -130,26 +119,20 @@ namespace LambdaFunction
             }
             else
             {
-                Console.WriteLine("Adding new user to Dynamo DB..");
-                context.Save(newItem);
-                Console.WriteLine("User added.");
+                var stationId = GetNearestGeoStation(user);
+                var userId = SaveUserToDatabase(user, stationId);
 
-                UserSnsModel snsModel = new UserSnsModel
-                {
-                    UserId = newItem.Id,
-                    PhoneNumber = newItem.PhoneNumber,
-                    StationId = newItem.StationId,
-                    EmailAddress = newItem.Email
-                };
-                SendSnsNotification(snsModel);
-                //CreateSubscriptionInSnS(newItem.Email, newItem.StationId);
+                SendSnsNotification(user, userId, stationId);
+
                 response.StatusCode = (int)HttpStatusCode.OK;
                 response.Body = SuccesfullyResponseMessage;
                 return response;
             }
         }
-        private void GetNearestGeoStation(UserDocument user){
-
+        private string GetNearestGeoStation(UserModel model){
+            var sensors = context.Scan<SensorDocument>(null);
+            var nearest = sensors.OrderBy(x =>x.GetDistanceTo(model.Latitude, model.Longtitude)).First();
+            return nearest.Id;
         }
 
         private void CreateSubscriptionInSnS(string email, int stationId)
@@ -163,12 +146,40 @@ namespace LambdaFunction
             snsClient.SetSubscriptionAttributes(attributeRequest);
         }
 
-        private void SendSnsNotification(UserSnsModel model)
+        private string SaveUserToDatabase(UserModel model, string stationId)
         {
-            Console.WriteLine("Starting creation of SnS Lambda Topic...");
-            Console.WriteLine(string.Format("Input parameters: {0}", model.ToString()));
 
-            string payload = JsonConvert.SerializeObject(model);
+            UserDocument newItem = new UserDocument()
+            {
+                Id = Guid.NewGuid().ToString(),
+                PhoneNumber = model.PhoneNumber,
+                Email = model.EmailAddress,
+                Lat = model.Latitude,
+                Lng = model.Longtitude,
+                StationId = stationId
+            };
+
+            Console.WriteLine("Adding new user to Dynamo DB..");
+            context.Save(newItem);
+            Console.WriteLine("User added.");
+
+            return newItem.Id;
+        }
+
+        private void SendSnsNotification(UserModel model, string id, string stationId)
+        {
+            UserSnsModel snsModel = new UserSnsModel
+            {
+                UserId = id,
+                PhoneNumber = model.PhoneNumber,
+                StationId = stationId,
+                EmailAddress = model.EmailAddress
+            };
+
+            Console.WriteLine("Starting creation of SnS Lambda Topic...");
+            Console.WriteLine(string.Format("Input parameters: {0}", snsModel.ToString()));
+
+            string payload = JsonConvert.SerializeObject(snsModel);
 
             Console.WriteLine(string.Format("Serialized payload: {0}", payload));
 
