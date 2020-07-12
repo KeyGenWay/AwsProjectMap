@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherProject", "WeatherProject\WeatherProject.csproj", "{06B2CB0E-EFE7-444F-A69E-7CCEB8615C30}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LambdaFunction", "LambdaFunction\LambdaFunction.csproj", "{9A8AB57A-AF8D-4F62-9B16-8BCA7B6E1335}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LambdaFunction.Tests", "LambdaFunction.Tests\LambdaFunction.Tests.csproj", "{6DD9A2E8-33F2-4752-B299-64BBD2DE703E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LambdaFunction.Tests", "LambdaFunction.Tests\LambdaFunction.Tests.csproj", "{6DD9A2E8-33F2-4752-B299-64BBD2DE703E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{06B2CB0E-EFE7-444F-A69E-7CCEB8615C30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06B2CB0E-EFE7-444F-A69E-7CCEB8615C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06B2CB0E-EFE7-444F-A69E-7CCEB8615C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06B2CB0E-EFE7-444F-A69E-7CCEB8615C30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9A8AB57A-AF8D-4F62-9B16-8BCA7B6E1335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9A8AB57A-AF8D-4F62-9B16-8BCA7B6E1335}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A8AB57A-AF8D-4F62-9B16-8BCA7B6E1335}.Release|Any CPU.ActiveCfg = Release|Any CPU
